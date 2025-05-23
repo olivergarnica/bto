@@ -2,23 +2,35 @@ import random
 
 # This is a simple shoe class for blackjack
 # It will create a shoe with a given number of decks
-def shoe(numDecks = 1):
-    cards = []
-    suits = ["c", "d", "s", "h"]
-    values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
+class Shoe:
+    def __init__(self, numDecks = 1):
+        self.suits = ["c", "d", "s", "h"]
+        self.values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
+        self.numDecks = numDecks
+        self.cards = self.createShoe()
+        
 
-    # Create a shoe
-    for i in range(numDecks):
-        for value in  values:
-            for suit in suits:
-                card = str(value) + str(suit)
-                cards.append(card)
+    def createShoe(self):
+        cards = []
+        suits = ["c", "d", "s", "h"]
+        values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
 
-    cards = random.sample(cards, len(cards))
+        # Create a shoe
+        for i in range(self.numDecks):
+            for value in  self.values:
+                for suit in self.suits:
+                    card = str(value) + str(suit)
+                    cards.append(card)
 
-    # Checks if the shoe is the right size
-    assert len(cards) == 52 * numDecks, "The deck is not the right size"
+        cards = random.sample(cards, len(cards))
 
-    return cards
+        # Checks if the shoe is the right size
+        assert len(cards) == 52 * self.numDecks, "The deck is not the right size"
 
-print(shoe(1))
+        return cards
+    
+    def dealOneCard(self):
+        dealtCard = self.cards[0]
+        cards = self.cards.pop(0)
+        return dealtCard
+
