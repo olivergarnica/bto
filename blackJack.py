@@ -1,10 +1,10 @@
-import shoe
+import Shoe
 
 
 class BlackJack:
     def __init__(self, numDecks = 1):
         self.numDecks = numDecks
-        self.shoe = shoe.Shoe(numDecks)
+        self.shoe = Shoe.Shoe(numDecks)
 
     def game():
         # deal every player 2 cards
