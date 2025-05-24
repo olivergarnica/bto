@@ -26,7 +26,6 @@ class Shoe:
 
         # Checks if the shoe is the right size
         assert len(cards) == 52 * self.numDecks, "The deck is not the right size"
-
         return cards
     
     def dealOneCard(self):
