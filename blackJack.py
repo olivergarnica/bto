@@ -33,9 +33,12 @@ class BlackJack():
                 
                 dealersCards = {numHands : []}
                 self.dealCards(numHands, dealersCards)
+                dealerHandValue = self.valueHand(dealersCards[numHands])
 
                 for i in range(numHands):
                     handValue = self.valueHand(self.user.hands[i])
+                    handValues[i] = handValue
+                    
 
         
     
