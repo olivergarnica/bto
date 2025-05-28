@@ -4,6 +4,7 @@ class User:
         self.numHands = numHands
         self.money = money
         self.hands = {i: [] for i in range(numHands)}
+        self.bets = {i: 0 for i in range(numHands)}
     
     def bet(self, bet, handIndex=0):
         if handIndex < 0 or handIndex >= self.numHands:
@@ -12,6 +13,8 @@ class User:
         if bet > self.money:
             raise ValueError("You don't have enough money to make this bet")
         self.money -= bet
+        self.bets[handIndex] += bet
+        
         return bet
     
     def outcome(self, outcome, bet):
