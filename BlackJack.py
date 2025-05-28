@@ -38,10 +38,64 @@ class BlackJack():
                 for i in range(numHands):
                     handValue = self.valueHand(self.user.hands[i])
                     handValues[i] = handValue
-                    
-
-        
     
+
+    
+    def playHand(self, handIndex):
+        numSplits = 0
+        while True:
+            action = input(f"Hand {handIndex + 1}: Do you want to hit, stand, double down, or split? ").lower()
+            if action == "hit":
+                self.hit(handIndex)
+                handValue = self.valueHand(self.user.hands[handIndex])
+                if handValue > 21:
+                    print(f"Hand {handIndex + 1} busts!")
+                    break
+            elif action == "stand":
+                print(f"Hand {handIndex + 1} stands.")
+                break
+            elif action == "double down":
+                self.doubleDown(handIndex)
+                handValue = self.valueHand(self.user.hands[handIndex])
+                if handValue > 21:
+                    print(f"Hand {handIndex + 1} busts!")
+                    break
+            elif action == "split":
+                numSplits += 1
+                if numSplits > 3:
+                    print("You can only split up to 3 times.")
+                    break
+                self.split(handIndex)
+                card = self.shoe.dealOneCard()
+                self.user.hands[handIndex].append(card)
+                print(f"New card dealt to hand {handIndex + 1}: {card}")
+                print(f"Hand {handIndex + 1} split into two hands.")
+                self.playHand(handIndex)
+                self.playHand(int(handIndex) + 0.1)  # Play the new hand created by the split
+                break
+            else:
+                print("Invalid action. Please choose hit, stand, double down, or split.")
+
+
+    def hit(self, handIndex):
+        card = self.shoe.dealOneCard()
+        self.user.hands[handIndex].append(card)
+        
+
+    def doubleDown(self, handIndex):
+        card = self.shoe.dealOneCard()
+        self.user.hands[handIndex].append(card)
+        bet = self.user.bet(self.user.bets[handIndex], handIndex)
+        
+    def split(self, handIndex):
+        assert len(self.user.hands[handIndex]) == 2, "You can only split if you have two cards"
+
+        self.user.hands = sorted(self.user.hands())
+        tempHand = self.user.hands[handIndex]
+        self.user.hands[handIndex] = [tempHand[0]]
+        self.user.hands[int(handIndex)+0.1] = [tempHand[1]]
+        self.user.bets[int(handIndex)+0.1] = self.user.bets[handIndex]
+        
 
     def valueHand(self, hand):
         cardValue = 0
