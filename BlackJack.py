@@ -1,7 +1,6 @@
 from Shoe import Shoe
 from User import User
 
-
 class BlackJack():
     def __init__(self, numDecks = 1):
         self.numDecks = numDecks
@@ -13,10 +12,18 @@ class BlackJack():
         if numDecks < 1 or numDecks > 8:
             raise ValueError("You can only play with 1 to 8 decks")
         
-        money = int(input("How much money do you want to start with? (100 to 10000) "))
+        while True:
+            try:
+                money = int(input("How much money do you want to start with? "))
+                if 10 <= money <= 10000:
+                    break
+                else:
+                    print("Don't kid yourself of you $$$. Enter a number between 10 and 10000")
+            except ValueError:
+                print("Enter a valid number")
 
         while True:
-            hitOnSoft = input("Do you want the dealer to hit on a soft 17? (y/n)").strip().lower()
+            hitOnSoft = input("Do you want the dealer to hit on a soft 17? (y/n) ").strip().lower()
             if hitOnSoft in ("n", "y"):
                 if hitOnSoft == "y":
                     hitOnSoft = True
@@ -24,10 +31,14 @@ class BlackJack():
                     hitOnSoft = False
                 break
             print("Invalid input. Please enter 'hard' or 'soft'.")
+            
+            
+        print("And so it begins")
+        print("########BLACKJACK########\n\n")
 
 
         while (True):
-            while (len(self.shoe.cards) > 20):  # Change the 20 to an int that changes based on parameters
+            while (len(self.shoe.cards) > 32):
 
                 numHands = int(input("How many hands do you want to play? (1 to 4) "))
                 if numHands < 1 or numHands > 4:
@@ -35,8 +46,6 @@ class BlackJack():
 
                 self.user = User(numHands, money)
 
-                # handValues = {i: [] for i in range(numHands + 1)} 
-                
                 for i in range(numHands):
                     bet = int(input(f"How much do you want to bet for hand {i + 1}? "))
                     self.user.bet(bet, i)
@@ -45,37 +54,69 @@ class BlackJack():
                 dealersCards = {numHands : []}
                 self.dealCards(numHands, dealersCards)
                 dealerHandValue = self.valueHand(dealersCards[numHands])
-
+                upCard = dealersCards[numHands][0]
+                 
+                dealerBJ = False
                 for i in range(numHands):
-                    self.playHand(i)
-
-                print("Dealer's turn...")
-                self.dealerLogic(dealersCards[numHands], hitOnSoft)
-                
-                dealerHandValue = self.valueHand(dealersCards[numHands])
-                for i in range(numHands):
-                    handValue = self.valueHand(self.user.hands[i])
-
-                    if handValue > 21:
-                        # player busts
-                        self.user.outcome("bust", self.user.bets[i])
-                    elif dealerHandValue > 21:
-                        # player wins
-                        self.user.outcome("win", self.user.bets[i])
-                    elif handValue > dealerHandValue:
-                        # player wins
-                        self.user.outcome("win", self.user.bets[i])
-                    elif handValue == dealerHandValue:
-                        # push 
+                    playerHandVal = self.valueHand(self.user.hands[i])
+                    
+                    # Hand and Dealer get blackjack
+                    if playerHandVal == 21 and dealerHandValue == 21 and upCard[0] == 'A':
+                        print(f"Hand {i} and the dealer have blackjack and push")
                         self.user.outcome("push", self.user.bets[i])
-                    elif handValue < dealerHandValue:
-                        # player loses because dealer has higher hand
+                        self.user.hands[i] = None
+                        dealerBJ = True 
+
+                    # Hand doesn't and dealer does
+                    elif playerHandVal != 21 and dealerHandValue == 21 and upCard[0] == 'A':
+                        print(f"The dealer has blackjack and hand {i} doesn't")
                         self.user.outcome("lose", self.user.bets[i])
-                        
+                        self.user.hands[i] = None 
+                        dealerBJ = True
 
+                    # Hand does and dealer doesn't
+                    elif playerHandVal == 21 and dealerHandValue != 21:
+                        print(f"Hand {i} has blackjack and the dealer doesn't!")
+                        self.user.outcome("blackjack", self.user.bets[i])
+                        self.user.hands[i] = None
+
+                # Only play the game if the dealer did not get blackja
+                if not dealerBJ:
+                    for i in range(numHands):
+                        handVal = self.valueHand(self.user.hands[i])
+                        if handVal is not None:
+                            self.playHand(i)
+
+
+                    print("Dealer's turn...")
+                    self.dealerLogic(dealersCards[numHands], hitOnSoft)
+                    
+                    dealerHandValue = self.valueHand(dealersCards[numHands])
+                    for i in range(numHands):
+                        handValue = self.valueHand(self.user.hands[i])
+
+                        if handValue > 21:
+                            # player busts
+                            self.user.outcome("bust", self.user.bets[i], i)
+                        elif dealerHandValue > 21:
+                            # player wins
+                            self.user.outcome("win", self.user.bets[i], i)
+                        elif handValue > dealerHandValue:
+                            # player wins
+                            self.user.outcome("win", self.user.bets[i], i)
+                        elif handValue == dealerHandValue:
+                            # push 
+                            self.user.outcome("push", self.user.bets[i], i)
+                        elif handValue < dealerHandValue:
+                            # player loses because dealer has higher hand
+                            self.user.outcome("lose", self.user.bets[i], i)
+                            
                 
+                if self.user.money == 0:
+                    print("OUT OF MONEY BYE BYE")
+                    break
 
-                print("New round starting...")
+                print("New round starting...\n\n")
 
             break
                 
@@ -118,26 +159,13 @@ class BlackJack():
 
         if hitOnSoft == True:
 
-            # debug output
-            print(f"Dealer hits on soft 17.")
-
-
             while value < 17 or (value == 17 and 'A' in [card[0] for card in dealersCards]):
-
-                # debug output
-                print(f"dealt card: {self.shoe.cards[0]}")
 
                 dealersCards.append(self.shoe.dealOneCard())
                 value = self.valueHand(dealersCards)
         else:
 
-            # debug output
-            print(f"Dealer does not hit on soft 17.")
-
             while value < 17:
-
-                # debug output
-                print(f"dealt card: {self.shoe.cards[0]}")
 
                 dealersCards.append(self.shoe.dealOneCard())
                 value = self.valueHand(dealersCards)
@@ -148,6 +176,7 @@ class BlackJack():
     def hit(self, handIndex):
         card = self.shoe.dealOneCard()
         self.user.hands[handIndex].append(card)
+        print(f"Hand: {self.user.hands[handIndex]}")
         
 
     def doubleDown(self, handIndex):
@@ -189,7 +218,7 @@ class BlackJack():
             if i[0] == 'A' and handValue > 21:
                 handValue -= 10
 
-        print (f"Cards: {hand[0]}, {hand[1]} | Hand value: {handValue}")
+        # print (f"Cards: {hand[0]}, {hand[1]} | Hand value: {handValue}")
         return handValue
         
     
@@ -207,8 +236,9 @@ class BlackJack():
         for i in range(numHands):
             print(f"    Hand {i + 1}: {self.user.hands[i]}")
         
-        print("Dealer Hand: " + dealersCards[numHands][0] + ", " + dealersCards[numHands][1] + "(DCard)")
+        print("Dealer Hand: " + dealersCards[numHands][0] + ", " + "(DCard)")
     
+
             
 game1 = BlackJack()
 game1.game()
