@@ -18,7 +18,7 @@ class User:
     
     def outcome(self, outcome, bet):
         if outcome == "win":
-            self.money += bet * 2
+            self.money += bet
             print(f"You win! Your new balance is {self.money}.")
         elif outcome == "push":
             # nothig happens, money stays the same

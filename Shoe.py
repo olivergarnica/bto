@@ -10,6 +10,7 @@ class Shoe:
         self.cards = self.createShoe()
 
     def createShoe(self):
+
         cards = []
         suits = ["c", "d", "s", "h"]
         values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']

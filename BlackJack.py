@@ -116,12 +116,35 @@ class BlackJack():
     def dealerLogic(self, dealersCards, hitOnSoft):
         value = self.valueHand(dealersCards)
 
+        # debug output
+        print(f"Current shoe: {self.shoe.cards}")
+
         if hitOnSoft == True:
+
+            # debug output
+            print(f"Dealer hits on soft 17.")
+
+
             while value < 17 or (value == 17 and 'A' in [card[0] for card in dealersCards]):
+
+                # debug output
+                print(f"dealt card: {self.shoe.cards[0]}")
+
                 dealersCards.append(self.shoe.dealOneCard())
+                value = self.valueHand(dealersCards)
         else:
+
+            # debug output
+            print(f"Dealer does not hit on soft 17.")
+
             while value < 17:
+
+                # debug output
+                print(f"dealt card: {self.shoe.cards[0]}")
+
                 dealersCards.append(self.shoe.dealOneCard())
+                value = self.valueHand(dealersCards)
+
         
         print(f"Dealer's final hand: {dealersCards} | Hand value: {self.valueHand(dealersCards)}")
 
