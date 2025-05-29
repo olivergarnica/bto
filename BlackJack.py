@@ -3,51 +3,40 @@ from User import User
 
 
 class BlackJack():
-    # initializer, setting the number od decks and calling the shoe
     def __init__(self, numDecks = 1):
         self.numDecks = numDecks
         self.shoe = Shoe(numDecks)
+    
 
-    # The main drive.
     def game(self):
         numDecks = int(input("How many decks do you want to play with? (1 to 8) "))
         if numDecks < 1 or numDecks > 8:
             raise ValueError("You can only play with 1 to 8 decks")
+        
+        money = int(input("How much money do you want to start with? (100 to 10000) "))
 
-        # Bet size 
         while True:
-            try:
-                money = int(input("How much money to start with? "))
-                if 10 < money < 10000:
-                    break
-                else:
-                    print("Don't kid yourself, enter a number between 10 and 10000 (non-inclusive) ")
-            except ValueError:
-                print("Please enter a valid number")
-
-        # Hitting on soft or not
-        while True:
-            hitOnSoft = input("Do you want the dealer to hit on a soft 17? (y/n) ").strip().lower()
+            hitOnSoft = input("Do you want the dealer to hit on a soft 17? (y/n)").strip().lower()
             if hitOnSoft in ("n", "y"):
                 if hitOnSoft == "y":
                     hitOnSoft = True
                 else:
                     hitOnSoft = False
                 break
-            print("Invalid input. Please enter 'y' or 'n'.")
+            print("Invalid input. Please enter 'hard' or 'soft'.")
 
-        # Main playing and betting logic
-        while True:
-            while (len(self.shoe.cards) > 20):  # Should be 4 times the number of hands being played
+
+        while (True):
+            while (len(self.shoe.cards) > 20):  # Change the 20 to an int that changes based on parameters
 
                 numHands = int(input("How many hands do you want to play? (1 to 4) "))
-                while numHands < 1 or numHands > 4: 
-                    print("You can only play with 1 to 4 hands")
-                    numHands = int(input("PICK 1-4 HANDS TO PLAY WITH "))
+                if numHands < 1 or numHands > 4:
+                    raise ValueError("You can only play with 1 to 4 hands")
 
                 self.user = User(numHands, money)
 
-                #
+                # handValues = {i: [] for i in range(numHands + 1)} 
+                
                 for i in range(numHands):
                     bet = int(input(f"How much do you want to bet for hand {i + 1}? "))
                     self.user.bet(bet, i)
@@ -63,7 +52,7 @@ class BlackJack():
                 print("Dealer's turn...")
                 self.dealerLogic(dealersCards[numHands], hitOnSoft)
                     
-
+        
                 print("New round starting...")
 
             break
