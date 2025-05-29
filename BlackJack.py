@@ -40,7 +40,7 @@ class BlackJack():
                 for i in range(numHands):
                     bet = int(input(f"How much do you want to bet for hand {i + 1}? "))
                     self.user.bet(bet, i)
-                    money -= bet
+                    # money -= bet
                 
                 dealersCards = {numHands : []}
                 self.dealCards(numHands, dealersCards)
@@ -51,8 +51,30 @@ class BlackJack():
 
                 print("Dealer's turn...")
                 self.dealerLogic(dealersCards[numHands], hitOnSoft)
-                    
-        
+                
+                dealerHandValue = self.valueHand(dealersCards[numHands])
+                for i in range(numHands):
+                    handValue = self.valueHand(self.user.hands[i])
+
+                    if handValue > 21:
+                        # player busts
+                        self.user.outcome("bust", self.user.bets[i])
+                    elif dealerHandValue > 21:
+                        # player wins
+                        self.user.outcome("win", self.user.bets[i])
+                    elif handValue > dealerHandValue:
+                        # player wins
+                        self.user.outcome("win", self.user.bets[i])
+                    elif handValue == dealerHandValue:
+                        # push 
+                        self.user.outcome("push", self.user.bets[i])
+                    elif handValue < dealerHandValue:
+                        # player loses because dealer has higher hand
+                        self.user.outcome("lose", self.user.bets[i])
+                        
+
+                
+
                 print("New round starting...")
 
             break
@@ -111,7 +133,7 @@ class BlackJack():
     def doubleDown(self, handIndex):
         card = self.shoe.dealOneCard()
         self.user.hands[handIndex].append(card)
-        bet = self.user.bet(self.user.bets[handIndex], handIndex)
+        self.user.bet(self.user.bets[handIndex], handIndex)
         
     def split(self, handIndex):
         assert len(self.user.hands[handIndex]) == 2, "You can only split if you have two cards"  

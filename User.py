@@ -12,20 +12,25 @@ class User:
         
         if bet > self.money:
             raise ValueError("You don't have enough money to make this bet")
-        self.money -= bet
+        # self.money -= bet
         self.bets[handIndex] += bet
         return bet
     
     def outcome(self, outcome, bet):
         if outcome == "win":
             self.money += bet * 2
+            print(f"You win! Your new balance is {self.money}.")
         elif outcome == "push":
-            self.money += bet
+            # nothig happens, money stays the same
+            print(f"It's a push! Your balance remains {self.money}.")
         elif outcome == "blackjack":
-            self.money += bet * (6 / 5)
+            self.money += bet * (3 / 2)  # 1.5 times the bet, assuming blackjack pays 3:2
+            print(f"You got a blackjack! Your new balance is {self.money}.")
         elif outcome == "bust":
             self.money -= bet
+            print(f"You bust! Your new balance is {self.money}.")
         elif outcome == "lose":
             self.money -= bet
+            print(f"You lose! Your new balance is {self.money}.")
         
         
