@@ -118,7 +118,13 @@ class BlackJack():
 
                 print("New round starting...\n\n")
 
-            break
+            playAgain = input("Do you want to play another shoe? (y/n) ").strip().lower()
+            if playAgain == "n":
+                print("Thanks for playing!")
+                break
+            elif playAgain != "y":
+                print("Invalid input. Please enter 'y' or 'n'.")
+                continue
                 
 
     def playHand(self, handIndex):
