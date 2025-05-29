@@ -1,0 +1,36 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+
+# VS Code settings
+.vscode/
+
+# Test & cache artifacts
+.pytest_cache/
+.mypy_cache/
+.coverage
+*.cover
+coverage.xml
+
+# Jupyter notebook checkpoints (optional)
+.ipynb_checkpoints/
+
+# OS-specific files
+.DS_Store         # macOS
+Thumbs.db         # Windows
+ehthumbs.db       # Windows
+Desktop.ini       # Windows
+
+# SQLite database (optional for local development)
+*.sqlite3
+*.sqlite3-journal
+
+# Logs and local settings
+*.log
+local_settings.py
