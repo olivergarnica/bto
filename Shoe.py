@@ -8,7 +8,6 @@ class Shoe:
         self.values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
         self.numDecks = numDecks
         self.cards = self.createShoe()
-        
 
     def createShoe(self):
         cards = []
@@ -17,7 +16,7 @@ class Shoe:
 
         # Create a shoe
         for i in range(self.numDecks):
-            for value in  self.values:
+            for value in self.values:
                 for suit in self.suits:
                     card = str(value) + str(suit)
                     cards.append(card)
@@ -30,6 +29,5 @@ class Shoe:
     
     def dealOneCard(self):
         dealtCard = self.cards[0]
-        cards = self.cards.pop(0)
+        self.cards.pop(0)
         return dealtCard
-
