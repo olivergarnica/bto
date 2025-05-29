@@ -116,9 +116,6 @@ class BlackJack():
     def dealerLogic(self, dealersCards, hitOnSoft):
         value = self.valueHand(dealersCards)
 
-        # debug output
-        print(f"Current shoe: {self.shoe.cards}")
-
         if hitOnSoft == True:
 
             # debug output
