@@ -1,4 +1,4 @@
-import deal
+
 
 # This is the hi-lo count of the shoe being played
 # It will constantly update the running and true count of the shoe
