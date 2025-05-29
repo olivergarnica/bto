@@ -1,4 +1,5 @@
 import random
+from count import hiLo
 
 # This is a simple shoe class for blackjack
 # It will create a shoe with a given number of decks
@@ -8,12 +9,12 @@ class Shoe:
         self.values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
         self.numDecks = numDecks
         self.cards = self.createShoe()
+        self.hiLo = hiLo(self.numDecks)
 
     def createShoe(self):
         cards = []
         suits = ["c", "d", "s", "h"]
         values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
-
         # Create a shoe
         for i in range(self.numDecks):
             for value in self.values:
@@ -28,6 +29,8 @@ class Shoe:
         return cards
     
     def dealOneCard(self):
-        dealtCard = self.cards[0]
-        self.cards.pop(0)
+        dealtCard = self.cards.pop() 
+        self.hiLo.counts(dealtCard)
+        print(f"RUNNING COUNT: {self.hiLo.count}")
+        print(f"TRUE COUNT: {self.hiLo.trueCount}")
         return dealtCard
