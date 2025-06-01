@@ -1,6 +1,5 @@
 from Shoe import Shoe
 from User import User
-import random
 
 class BlackJack():
     def __init__(self, numDecks = 1):
@@ -40,8 +39,6 @@ class BlackJack():
 
         while (True):
             while (len(self.shoe.cards) > 32):
-                
-                number = random.randint(1, 100)
 
                 numHands = int(input("How many hands do you want to play? (1 to 4) "))
                 if numHands < 1 or numHands > 4:
@@ -58,10 +55,7 @@ class BlackJack():
                 self.dealCards(numHands, dealersCards)
                 dealerHandValue = self.valueHand(dealersCards[numHands])
                 upCard = dealersCards[numHands][0]
-
-
-
-
+                 
                 dealerBJ = False
                 for i in range(numHands):
                     playerHandVal = self.valueHand(self.user.hands[i])
@@ -135,9 +129,6 @@ class BlackJack():
 
     def playHand(self, handIndex):
         numSplits = 0
-
-        number = random.randint(1, 100)
-
         while True:
             action = input(f"Hand {handIndex + 1}: Do you want to hit, stand, double down, or split? ").lower()
             if action == "hit":
