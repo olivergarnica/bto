@@ -12,6 +12,7 @@ class BlackJack():
         numDecks = int(input("How many decks do you want to play with? (1 to 8) "))
         if numDecks < 1 or numDecks > 8:
             raise ValueError("You can only play with 1 to 8 decks")
+        self.shoe = Shoe(numDecks)
         
         while True:
             try:
@@ -39,6 +40,7 @@ class BlackJack():
 
 
         while (True):
+            print(f"the legnth of the shoe!!!!: {len(self.shoe.cards)}")
             while (len(self.shoe.cards) > 32):
                 
                 number = random.randint(1, 100)
@@ -57,8 +59,7 @@ class BlackJack():
                 dealersCards = {numHands : []}
                 self.dealCards(numHands, dealersCards)
                 dealerHandValue = self.valueHand(dealersCards[numHands])
-                upCard = dealersCards[numHands][0]
-
+                print(f"debugging dealer blackjack: {dealerHandValue}")
 
 
 
@@ -67,38 +68,39 @@ class BlackJack():
                     playerHandVal = self.valueHand(self.user.hands[i])
                     
                     # Hand and Dealer get blackjack
-                    if playerHandVal == 21 and dealerHandValue == 21 and upCard[0] == 'A':
-                        print(f"Hand {i} and the dealer have blackjack and push")
-                        self.user.outcome("push", self.user.bets[i])
+                    if playerHandVal == 21 and dealerHandValue == 21: 
+                        print(f"Hand {i + 1} and the dealer have blackjack and push")
+                        self.user.outcome("push", self.user.bets[i], i)
                         self.user.hands[i] = None
                         dealerBJ = True 
 
                     # Hand doesn't and dealer does
-                    elif playerHandVal != 21 and dealerHandValue == 21 and upCard[0] == 'A':
-                        print(f"The dealer has blackjack and hand {i} doesn't")
-                        self.user.outcome("lose", self.user.bets[i])
-                        self.user.hands[i] = None 
+                    elif playerHandVal != 21 and dealerHandValue == 21:
+                        print(f"The dealer has blackjack and hand {i + 1} doesn't")
+                        self.user.outcome("lose", self.user.bets[i], i)
                         dealerBJ = True
 
                     # Hand does and dealer doesn't
                     elif playerHandVal == 21 and dealerHandValue != 21:
-                        print(f"Hand {i} has blackjack and the dealer doesn't!")
-                        self.user.outcome("blackjack", self.user.bets[i])
+                        print(f"Hand {i + 1} has blackjack and the dealer doesn't!")
+                        self.user.outcome("blackjack", self.user.bets[i], i)
                         self.user.hands[i] = None
 
                 # Only play the game if the dealer did not get blackja
                 if not dealerBJ:
                     for i in range(numHands):
+                        if self.user.hands[i] is None:
+                            continue
                         handVal = self.valueHand(self.user.hands[i])
-                        if handVal is not None:
-                            self.playHand(i)
-
+                        self.playHand(i)
 
                     print("Dealer's turn...")
                     self.dealerLogic(dealersCards[numHands], hitOnSoft)
                     
                     dealerHandValue = self.valueHand(dealersCards[numHands])
                     for i in range(numHands):
+                        if self.user.hands[i] is None:
+                            continue
                         handValue = self.valueHand(self.user.hands[i])
 
                         if handValue > 21:
@@ -116,9 +118,10 @@ class BlackJack():
                         elif handValue < dealerHandValue:
                             # player loses because dealer has higher hand
                             self.user.outcome("lose", self.user.bets[i], i)
-                            
+                else:
+                    pass                            
                 
-                if self.user.money == 0:
+                if self.user.money <= 0:
                     print("OUT OF MONEY BYE BYE")
                     break
 
@@ -259,5 +262,4 @@ game1 = BlackJack()
 game1.game()
 
 
-        
 

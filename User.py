@@ -19,18 +19,18 @@ class User:
     def outcome(self, outcome, bet, handNum):
         if outcome == "win":
             self.money += bet
-            print(f"Hand {handNum} wins! Your new balance is {self.money}.")
+            print(f"Hand {handNum + 1} wins! Your new balance is {self.money}.")
         elif outcome == "push":
             # nothig happens, money stays the same
-            print(f"Hand {handNum} pushes! Your balance remains {self.money}.")
+            print(f"Hand {handNum + 1} pushes! Your balance remains {self.money}.")
         elif outcome == "blackjack":
             self.money += bet * (3 / 2)  # 1.5 times the bet, assuming blackjack pays 3:2
-            print(f"Hand {handNum} is a blackjack! Your new balance is {self.money}.")
+            print(f"Hand {handNum + 1} is a blackjack! Your new balance is {self.money}.")
         elif outcome == "bust":
             self.money -= bet
-            print(f"Hand {handNum} busts! Your new balance is {self.money}.")
+            print(f"Hand {handNum + 1} busts! Your new balance is {self.money}.")
         elif outcome == "lose":
             self.money -= bet
-            print(f"Hand {handNum} losees! Your new balance is {self.money}.")
+            print(f"Hand {handNum + 1} losees! Your new balance is {self.money}.")
         
         
