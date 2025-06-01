@@ -1,38 +1,40 @@
-from flask import Flask, request, jsonify, send_from_directory
-# from flask_cors import CORS
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from BlackJack import BlackJack
-from User import User
 
-app = Flask(__name__, static_folder='.')
-# CORS(app)  # Enable CORS if running frontend separately
+app = Flask(__name__)
+CORS(app)
 
-game_instances = {}  # simple in-memory store
+# Store game instances; in production, use a more robust solution
+games = {}
 
-@app.route("/")
-def index():
-    return send_from_directory('.', 'game.html')
-
-@app.route("/start", methods=["POST"])
+@app.route('/start', methods=['POST'])
 def start_game():
     data = request.get_json()
-    num_hands = data.get("num_hands")
-    money = data.get("money")
+    game_id = str(len(games) + 1)
+    num_hands = data.get('num_hands')
+    money = data.get('money')
+    hit_on_soft = data.get('hit_on_soft', False)
 
-    if not (1 <= num_hands <= 4):
-        return jsonify({"error": "Number of hands must be between 1 and 4"}), 400
-    if not (10 <= money <= 10000):
-        return jsonify({"error": "Money must be between 10 and 10000"}), 400
+    game = BlackJack(num_decks=1, money=money, hit_on_soft=hit_on_soft)
+    game.start_game(num_hands, money)
+    games[game_id] = game
 
-    game = BlackJack()
-    game.user = User(num_hands, money)
-    game_id = "game_1"  # or use session/user-specific ID
-    game_instances[game_id] = game
+    return jsonify({'game_id': game_id, 'message': 'Game started'})
 
-    return jsonify({
-        "message": "Game started",
-        "num_hands": num_hands,
-        "money": money
-    })
+@app.route('/deal', methods=['POST'])
+def deal_cards():
+    data = request.get_json()
+    game_id = data.get('game_id')
+    game = games.get(game_id)
 
-if __name__ == "__main__":
+    if not game:
+        return jsonify({'error': 'Invalid game ID'}), 400
+
+    result = game.deal_initial_cards()
+    return jsonify(result)
+
+# Add more routes for actions like hit, stand, etc.
+
+if __name__ == '__main__':
     app.run(debug=True)

@@ -1,70 +1,75 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blackjack Game</title>
-  <style>
-    .hand {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin: 5px;
-      display: inline-block;
-      border-radius: 8px;
-      background: #f5f5f5;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>BlackJack Game</title>
 </head>
 <body>
-  <h1>Start Blackjack Game</h1>
-  <form id="start-form">
-    <label>Number of Hands (1–4):</label>
-    <input type="number" id="num-hands" min="1" max="4" required /><br>
+    <h1>BlackJack Game</h1>
+    <form id="start-form">
+        <label for="num_hands">Number of Hands (1-4):</label>
+        <input type="number" id="num_hands" name="num_hands" min="1" max="4" required><br><br>
 
-    <label>Starting Money ($10–$10000):</label>
-    <input type="number" id="starting-money" min="10" max="10000" required /><br>
+        <label for="money">Starting Money (10-10000):</label>
+        <input type="number" id="money" name="money" min="10" max="10000" required><br><br>
 
-    <button type="submit">Start Game</button>
-  </form>
+        <label for="hit_on_soft">Dealer Hits on Soft 17:</label>
+        <input type="checkbox" id="hit_on_soft" name="hit_on_soft"><br><br>
 
-  <div id="status"></div>
-  <div id="game-board"></div>
+        <button type="submit">Start Game</button>
+    </form>
 
-  <script>
-    document.getElementById("start-form").addEventListener("submit", async function(e) {
-      e.preventDefault();
+    <div id="game-area" style="display:none;">
+        <h2>Game ID: <span id="game-id"></span></h2>
+        <button id="deal-button">Deal Cards</button>
+        <div id="game-output"></div>
+    </div>
 
-      const numHands = parseInt(document.getElementById("num-hands").value);
-      const money = parseInt(document.getElementById("starting-money").value);
+    <script>
+        let gameId = null;
 
-      const response = await fetch("/start", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ num_hands: numHands, money: money })
-      });
+        document.getElementById('start-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const num_hands = parseInt(document.getElementById('num_hands').value);
+            const money = parseInt(document.getElementById('money').value);
+            const hit_on_soft = document.getElementById('hit_on_soft').checked;
 
-      const data = await response.json();
+            const response = await fetch('http://localhost:5000/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ num_hands, money, hit_on_soft })
+            });
 
-      if (response.ok) {
-        document.getElementById("status").innerText =
-          `Game started with ${data.num_hands} hand(s) and $${data.money}`;
-        setupGameBoard(numHands);
-      } else {
-        document.getElementById("status").innerText = `Error: ${data.error}`;
-      }
-    });
+            const data = await response.json();
+            if (data.game_id) {
+                gameId = data.game_id;
+                document.getElementById('game-id').textContent = gameId;
+                document.getElementById('start-form').style.display = 'none';
+                document.getElementById('game-area').style.display = 'block';
+            } else {
+                alert('Error starting game');
+            }
+        });
 
-    function setupGameBoard(numHands) {
-      const gameBoard = document.getElementById("game-board");
-      gameBoard.innerHTML = "";
-      for (let i = 1; i <= numHands; i++) {
-        const handDiv = document.createElement("div");
-        handDiv.className = "hand";
-        handDiv.innerText = `Hand ${i}`;
-        gameBoard.appendChild(handDiv);
-      }
-    }
-  </script>
+        document.getElementById('deal-button').addEventListener('click', async () => {
+            const response = await fetch('http://localhost:5000/deal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ game_id: gameId })
+            });
+
+            const data = await response.json();
+            if (data.player_hands && data.dealer_upcard) {
+                let output = '<h3>Your Hands:</h3>';
+                for (const [handIndex, cards] of Object.entries(data.player_hands)) {
+                    output += `<p>Hand ${parseInt(handIndex) + 1}: ${cards.join(', ')}</p>`;
+                }
+                output += `<h3>Dealer's Upcard: ${data.dealer_upcard}</h3>`;
+                document.getElementById('game-output').innerHTML = output;
+            } else {
+                alert('Error dealing cards');
+            }
+        });
+    </script>
 </body>
 </html>
