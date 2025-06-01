@@ -32,6 +32,4 @@ class Shoe:
     def dealOneCard(self):
         dealtCard = self.cards.pop() 
         self.hiLo.counts(dealtCard)
-        print(f"RUNNING COUNT: {self.hiLo.count}")
-        print(f"TRUE COUNT: {self.hiLo.trueCount}")
         return dealtCard
