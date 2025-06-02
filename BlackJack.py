@@ -56,15 +56,8 @@ class BlackJack():
                 dealersCards = {numHands : []}
                 self.dealCards(numHands, dealersCards)
                 dealerHandValue = self.valueHand(dealersCards[numHands])
-<<<<<<< HEAD
                 upCard = dealersCards[numHands][0]
                  
-=======
-                print(f"debugging dealer blackjack: {dealerHandValue}")
-
-
-
->>>>>>> ff85faf6103f40769bd3eb8d8df3184c2da55f30
                 dealerBJ = False
                 for i in range(numHands):
                     playerHandVal = self.valueHand(self.user.hands[i])
