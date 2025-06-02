@@ -1,5 +1,6 @@
 from Shoe import Shoe
 from User import User
+import random
 
 class BlackJack():
     def __init__(self, numDecks = 1):
@@ -37,16 +38,20 @@ class BlackJack():
         print("And so it begins")
         print("########BLACKJACK########\n\n")
 
+        self.user = User(money=money)
 
         while (True):
-            print(f"the legnth of the shoe!!!!: {len(self.shoe.cards)}")
             while (len(self.shoe.cards) > 32):
+                print(f"the legnth of the shoe!!!!: {len(self.shoe.cards)}")    
+                number = random.randint(1, 100)
 
                 numHands = int(input("How many hands do you want to play? (1 to 4) "))
                 if numHands < 1 or numHands > 4:
                     raise ValueError("You can only play with 1 to 4 hands")
 
-                self.user = User(numHands, money)
+                self.user.numHands = numHands                
+                self.user.hands = {i:[] for i in range(numHands)}
+                self.user.bets = {i:0 for i in range(numHands)}
 
                 for i in range(numHands):
                     bet = int(input(f"How much do you want to bet for hand {i + 1}? "))
@@ -56,8 +61,9 @@ class BlackJack():
                 dealersCards = {numHands : []}
                 self.dealCards(numHands, dealersCards)
                 dealerHandValue = self.valueHand(dealersCards[numHands])
-                upCard = dealersCards[numHands][0]
-                 
+               
+
+
                 dealerBJ = False
                 for i in range(numHands):
                     playerHandVal = self.valueHand(self.user.hands[i])
@@ -67,12 +73,13 @@ class BlackJack():
                         print(f"Hand {i + 1} and the dealer have blackjack and push")
                         self.user.outcome("push", self.user.bets[i], i)
                         self.user.hands[i] = None
-                        dealerBJ = True 
+                        dealerBJ = True
 
                     # Hand doesn't and dealer does
                     elif playerHandVal != 21 and dealerHandValue == 21:
                         print(f"The dealer has blackjack and hand {i + 1} doesn't")
                         self.user.outcome("lose", self.user.bets[i], i)
+                        self.user.hands[i] = None 
                         dealerBJ = True
 
                     # Hand does and dealer doesn't
@@ -87,7 +94,10 @@ class BlackJack():
                         if self.user.hands[i] is None:
                             continue
                         handVal = self.valueHand(self.user.hands[i])
-                        self.playHand(i)
+                        action = self.playHand(i)
+                        if action == "double down":
+                            print(f"Money on dd: {self.user.bets[i]}")
+                            continue
 
                     print("Dealer's turn...")
                     self.dealerLogic(dealersCards[numHands], hitOnSoft)
@@ -119,7 +129,7 @@ class BlackJack():
                 if self.user.money <= 0:
                     print("OUT OF MONEY BYE BYE")
                     break
-
+                print(f"current cash: ${self.user.money}")
                 print("New round starting...\n\n")
 
             playAgain = input("Do you want to play another shoe? (y/n) ").strip().lower()
@@ -133,6 +143,9 @@ class BlackJack():
 
     def playHand(self, handIndex):
         numSplits = 0
+
+        number = random.randint(1, 100)
+
         while True:
             action = input(f"Hand {handIndex + 1}: Do you want to hit, stand, double down, or split? ").lower()
             if action == "hit":
@@ -147,9 +160,10 @@ class BlackJack():
             elif action == "double down":
                 self.doubleDown(handIndex)
                 handValue = self.valueHand(self.user.hands[handIndex])
+                print(f"Hand {handIndex + 1} ends after double down.")
                 if handValue > 21:
                     print(f"Hand {handIndex + 1} busts!")
-                    break
+                return "double down"
             elif action == "split":
                 numSplits += 1
                 if numSplits > 3:
@@ -162,6 +176,8 @@ class BlackJack():
                 break
             else:
                 print("Invalid action. Please choose hit, stand, double down, or split.")
+
+        return action
 
 
     def dealerLogic(self, dealersCards, hitOnSoft):
@@ -193,6 +209,7 @@ class BlackJack():
         card = self.shoe.dealOneCard()
         self.user.hands[handIndex].append(card)
         self.user.bet(self.user.bets[handIndex], handIndex)
+        print(f"Hand: {self.user.hands[handIndex]}")
         
     def split(self, handIndex):
         assert len(self.user.hands[handIndex]) == 2, "You can only split if you have two cards"  
@@ -252,6 +269,5 @@ class BlackJack():
             
 game1 = BlackJack()
 game1.game()
-
 
 

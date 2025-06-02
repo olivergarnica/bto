@@ -32,4 +32,4 @@ class User:
         elif outcome == "lose":
             self.money -= bet
 
-            print(f"Hand {handNum} loses! Your new balance is {self.money}.")
+            print(f"Hand {handNum + 1} loses! Your new balance is {self.money}.")
