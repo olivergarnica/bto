@@ -50,4 +50,5 @@ High true count --> more 10s and aces are left in the shoe
 
 ---
 
-Up next: [Omega II](#strategy-2-omega-ii)
+Up next: [KO] (#strategy-KO)
+https://www.blackjackonline.com/counting/ko/
