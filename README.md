@@ -7,3 +7,5 @@ Terminal implementation of a blackjack game along with counting trainer. Learn b
 * If you want to implement any counting strategies, implement them in count.py and call them in count checker. 
 * Format the game (shoe size, soft 17, etc.)
 * Choose the amount of hands you want to play
+
+  ![Alt Text](./BJA_Basic_Strategy.webp)
