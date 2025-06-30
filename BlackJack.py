@@ -1,6 +1,7 @@
 from Shoe import Shoe
 from User import User, Hand
 import random
+import time
 
 class BlackJack():
     def __init__(self, numDecks = 1):
@@ -262,6 +263,8 @@ class BlackJack():
                     card = self.shoe.dealOneCard()
                     if j != numHands:
                         self.user.hands[j].cards.append(card)
+                        print(f"Updated hand {j+1}: {self.user.hands[j]}")
+                        time.sleep(1)
                     else:
                         dealersCards[j].append(card)
 
